@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nottinghamshire County Council</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 min-h-screen flex flex-col">
+  
+  <!-- Header Image -->
+  <header class="w-full">
+    <img src="ncc_banner_new.jpg" alt="Nottinghamshire County Council Header" class="w-full max-h-52 object-cover">
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow flex items-center justify-center p-6">
+    <div class="bg-white/90 backdrop-blur-lg shadow-2xl rounded-2xl p-10 max-w-2xl text-center transform transition duration-300 hover:scale-105 hover:shadow-green-700/40">
+      
+      <h1 class="text-3xl md:text-4xl font-extrabold text-green-800 mb-6">
+        Welcome to Nottinghamshire County Council
+      </h1>
+      
+      <p class="text-lg md:text-xl text-gray-700 mb-4">
+        Create and manage your job adverts using <span class="font-semibold text-green-700">VacancyIQ</span> here on this site.
+      </p>
+      
+      <p class="text-lg md:text-xl text-gray-700 mb-8">
+        Use the "Click Here to Get Help" button to activate <span class="font-semibold text-green-700">VacancyIQ</span>.
+      </p>
+
+      
+    </div>
+  </main>
+
+  <!-- Footer -->
+<footer style="background-color: #2D8932; color: #d1d5db; text-align: center; padding: 1rem; font-size: 0.875rem;">
+  &copy; 2025 Nottinghamshire County Council. All Rights Reserved.
+</footer>
+
+
+<!--pixel:end:dunnesstoresqa.custom-scripts-->
+<!-- DisableInputExtension definition -->
+<script type="text/javascript">
+  const DisableInputExtension = {
+    name: 'DisableInput',
+    type: 'effect',
+    match: ({ trace }) =>
+      trace.type === 'ext_disableInput' ||
+      trace.payload?.name === 'ext_disableInput',
+    effect: ({ trace }) => {
+      const { isDisabled } = trace.payload;
+
+      function disableInput() {
+        // Find all elements that have a shadowRoot
+        const hosts = [...document.querySelectorAll('*')].filter(
+          (el) => el.shadowRoot
+        );
+
+        let textarea = null;
+        let sendBtn = null;
+        let root = null;
+
+        // Search through each shadow root to find the textarea
+        for (const host of hosts) {
+          root = host.shadowRoot;
+          textarea = root.querySelector('textarea.vfrc-chat-input');
+          if (textarea) {
+            sendBtn = root.querySelector('#vfrc-send-message');
+            break;
+          }
+        }
+
+        if (!textarea) {
+          console.error('DisableInputExtension: Voiceflow textarea not found');
+          return;
+        }
+
+        if (!root) {
+          console.error('DisableInputExtension: Shadow root not found');
+          return;
+        }
+
+        // Add or update style tag for visual disabled state
+        let styleTag = root.querySelector('#vf-disable-input-style');
+        if (!styleTag) {
+          styleTag = document.createElement('style');
+          styleTag.id = 'vf-disable-input-style';
+          root.appendChild(styleTag);
+        }
+
+        // Store original value descriptor
+        const originalValueDescriptor = Object.getOwnPropertyDescriptor(
+          HTMLTextAreaElement.prototype,
+          'value'
+        );
+
+        function updateInputState() {
+          if (isDisabled) {
+            // Disable: apply visual styles and logical disable
+            styleTag.textContent = `
+              textarea.vfrc-chat-input {
+                pointer-events: none !important;
+                opacity: 0.4 !important;
+                cursor: default !important;
+                caret-color: transparent !important;
+              }
+              #vfrc-send-message {
+                pointer-events: none !important;
+                opacity: 0.35 !important;
+                cursor: default !important;
+              }
+            `;
+
+            // Logical disable
+            textarea.readOnly = true;
+            textarea.disabled = true;
+            if (sendBtn) {
+              sendBtn.disabled = true;
+            }
+
+            // Clear the value and block changes
+            Object.defineProperty(textarea, 'value', {
+              get: function () {
+                return '';
+              },
+              set: function () {},
+              configurable: true,
+            });
+            textarea.value = '';
+          } else {
+            // Enable: remove visual styles and logical enable
+            styleTag.textContent = '';
+
+            // Logical enable
+            textarea.readOnly = false;
+            textarea.disabled = false;
+            if (sendBtn) {
+              sendBtn.disabled = false;
+            }
+
+            // Restore original value getter/setter
+            Object.defineProperty(textarea, 'value', originalValueDescriptor);
+          }
+
+          // Trigger events to update component state
+          textarea.dispatchEvent(
+            new Event('input', { bubbles: true, cancelable: true })
+          );
+          textarea.dispatchEvent(
+            new Event('change', { bubbles: true, cancelable: true })
+          );
+        }
+
+        // Initial update
+        updateInputState();
+      }
+
+      disableInput();
+    },
+  };
+</script>
+
+<!-- Voiceflow widget loader with DisableInputExtension wired in -->
+<script type="text/javascript">
+  (function (d, t) {
+    var v = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    v.onload = function () {
+      window.voiceflow.chat
+        .load({
+          verify: { projectID: '68777e19bd763781d4b8a571' },
+          url: 'https://general-runtime.voiceflow.com',
+          versionID: 'production',
+          voice: {
+            url: 'https://runtime-api.voiceflow.com',
+          },
+          assistant: {
+            // Attach the DisableInput extension here
+            extensions: [DisableInputExtension],
+          },
+        })
+      
+        .then(() => {
+          window.voiceflow.chat.proactive.clear();
+          window.voiceflow.chat.proactive.push(
+            {
+              type: 'text',
+              payload: {
+                message:
+                       "Hi there 👋 I'm VacancyIQ, your AI Recruitment Assistant" 
+              },
+            },
+            {
+              type: 'text',
+              payload: {
+                message:
+                     "Click on the 'Click here to Get Help' button to with creating your job title, advert text, job description and advertising content for Nottinghamshire County Council.",
+              },
+            }
+          );
+        });
+    };
+    v.src = 'https://cdn.voiceflow.com/widget-next/bundle.mjs';
+    v.type = 'text/javascript';
+    s.parentNode.insertBefore(v, s);
+  })(document, 'script');
+</script>
+</body>
+</html>
